@@ -6,16 +6,12 @@ import SimpleLightbox from "simplelightbox";
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 export const refs = {
-    input: document.querySelector('[name="searchQuery"]'),
-    list: document.querySelector('.country-list'),
-    divInfo: document.querySelector('.country-info'),
-    searchBtn: document.querySelector('[name="searchBtn"]'),
     form: document.querySelector('.search-form'),
     gallery: document.querySelector('.gallery'),
-    cardList: document.querySelector('.card-list'),
     loadmoreBtn: document.querySelector('.load-more'),
     divMore: document.querySelector('.div-more'),
     pEnd: document.querySelector('.end_of_colection'),
+    infoImg: document.querySelector('.info-img'),
 }
 
 refs.form.addEventListener('submit', valueSearch);
@@ -37,29 +33,29 @@ function valueSearch(e) {
 
 
 export function render(data) {
-  console.log('item', data);
- if (data.hits.length === 0) return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+  if (data.hits.length === 0) return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
      if (data.totalHits <= per_page * page) {
        refs.loadmoreBtn.classList.add('is-hidden');
        refs.divMore.classList.add('is-hidden');
-        refs.pEnd.classList.remove('is-hidden');
+       refs.pEnd.classList.remove('is-hidden');
         return;
     };      
-        const photosTemplate = data.hits.map(card => photoTemplate(card));
-           
-
-  refs.gallery.insertAdjacentHTML('beforeend', photosTemplate.join(''));
+  const photosTemplate = data.hits.map(card => photoTemplate(card));
   
+  refs.infoImg.insertAdjacentHTML('beforeend', data.totalHits);
+  refs.infoImg.classList.remove('is-hidden');
+  refs.gallery.insertAdjacentHTML('beforeend', photosTemplate.join(''));
   refs.loadmoreBtn.classList.remove('is-hidden');
   refs.divMore.classList.remove('is-hidden');
-    const lightbox = new SimpleLightbox('.simplelightbox', {
+
+  const lightbox = new SimpleLightbox('.simplelightbox', {
         captionDelay: '250',
-    });
+  });
   lightbox.refresh();
 
-    console.log(data);
-    console.log(data.totalHits);
-    console.log(data.totalHits <= per_page * page);
+    // console.log(data);
+    // console.log(data.totalHits);
+    // console.log(data.totalHits <= per_page * page);
 
         }
 
