@@ -55,6 +55,7 @@ export function render(data) {
     const lightbox = new SimpleLightbox('.simplelightbox', {
         captionDelay: '250',
     });
+  lightbox.refresh();
 
     console.log(data);
     console.log(data.totalHits);
