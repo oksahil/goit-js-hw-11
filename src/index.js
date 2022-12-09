@@ -27,13 +27,14 @@ function valueSearch(e) {
     if (searchQuery.trim().length === 0) return Notiflix.Notify.failure('Sorry, input some data!');
 
     page = 1;
-    refs.gallery.innerHTML = "";
+  refs.gallery.innerHTML = "";
+  refs.infoImg.innerHTML = "";
     fetchPtoto(searchQuery, page, per_page).then(render).catch(error);
 };
 
 
 export function render(data) {
-  if (data.hits.length === 0) return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+   if (data.hits.length === 0) return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
      if (data.totalHits <= per_page * page) {
        refs.loadmoreBtn.classList.add('is-hidden');
        refs.divMore.classList.add('is-hidden');
@@ -42,7 +43,7 @@ export function render(data) {
     };      
   const photosTemplate = data.hits.map(card => photoTemplate(card));
   
-  refs.infoImg.insertAdjacentHTML('beforeend', data.totalHits);
+  refs.infoImg.insertAdjacentHTML('beforeend', `Total images:  ${data.totalHits}`);
   refs.infoImg.classList.remove('is-hidden');
   refs.gallery.insertAdjacentHTML('beforeend', photosTemplate.join(''));
   refs.loadmoreBtn.classList.remove('is-hidden');
@@ -52,18 +53,13 @@ export function render(data) {
         captionDelay: '250',
   });
   lightbox.refresh();
-
-    // console.log(data);
-    // console.log(data.totalHits);
-    // console.log(data.totalHits <= per_page * page);
-
-        }
+}
 
 
-function loadMore(e) {    
+function loadMore() {    
     page += 1;
     fetchPtoto(searchQuery, page, per_page).then(render);
 };
-function error(e) {
+function error() {
     return Notiflix.Notify.failure('Sorry we cant load pictures. Try again!');
 }
