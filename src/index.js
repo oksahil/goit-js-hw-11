@@ -21,7 +21,7 @@ let searchQuery = '';
 let page = 1;
 let per_page = 40;
 
-function valueSearch(e) {
+async function valueSearch(e) {
     e.preventDefault();
     searchQuery = e.currentTarget.elements.searchQuery.value;
     if (searchQuery.trim().length === 0) return Notiflix.Notify.failure('Sorry, input some data!');
@@ -29,25 +29,28 @@ function valueSearch(e) {
     page = 1;
   refs.gallery.innerHTML = "";
   refs.infoImg.innerHTML = "";
-    fetchPtoto(searchQuery, page, per_page).then(render).catch(error);
+  try {
+    const data = await fetchPtoto(searchQuery, page, per_page);
+  return render(data);  } catch (error) {
+    return Notiflix.Notify.failure('Sorry we cant load pictures. Try again!');
+  }
 };
 
 
 export function render(data) {
-  if (data.hits.length === 0)
-  {
+  if (data.hits.length === 0) {
     refs.loadmoreBtn.classList.add('is-hidden');
     refs.divMore.classList.add('is-hidden');
     return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
   }
-     if (data.totalHits <= per_page * page) {
+    if (data.totalHits <= per_page * page) {
       Notiflix.Notify.failure('Were sorry, but you ve reached the end of search results.');
-       refs.divMore.classList.remove('is-hidden');
-       refs.loadmoreBtn.classList.remove('is-hidden');
-       refs.pEnd.classList.remove('is-hidden');
-       refs.loadmoreBtn.classList.add('is-hidden');
-       return;
-  };      
+      refs.divMore.classList.remove('is-hidden');
+      refs.loadmoreBtn.classList.remove('is-hidden');
+      refs.pEnd.classList.remove('is-hidden');
+      refs.loadmoreBtn.classList.add('is-hidden');
+      return;
+  };
   
   const photosTemplate = data.hits.map(card => photoTemplate(card));
   
@@ -61,13 +64,11 @@ export function render(data) {
         captionDelay: '250',
   });
   lightbox.refresh();
+  refs.pEnd.classList.add('is-hidden');
 }
 
-
-function loadMore() {    
+async function loadMore() {    
     page += 1;
-    fetchPtoto(searchQuery, page, per_page).then(render);
+  const data = await fetchPtoto(searchQuery, page, per_page);
+  return render(data);
 };
-function error() {
-  return Notiflix.Notify.failure('Sorry we cant load pictures. Try again!');
-}
