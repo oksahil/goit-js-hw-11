@@ -34,13 +34,21 @@ function valueSearch(e) {
 
 
 export function render(data) {
-   if (data.hits.length === 0) return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+  if (data.hits.length === 0)
+  {
+    refs.loadmoreBtn.classList.add('is-hidden');
+    refs.divMore.classList.add('is-hidden');
+    return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+  }
      if (data.totalHits <= per_page * page) {
-       refs.loadmoreBtn.classList.add('is-hidden');
-       refs.divMore.classList.add('is-hidden');
+      Notiflix.Notify.failure('Were sorry, but you ve reached the end of search results.');
+       refs.divMore.classList.remove('is-hidden');
+       refs.loadmoreBtn.classList.remove('is-hidden');
        refs.pEnd.classList.remove('is-hidden');
-        return;
-    };      
+       refs.loadmoreBtn.classList.add('is-hidden');
+       return;
+  };      
+  
   const photosTemplate = data.hits.map(card => photoTemplate(card));
   
   refs.infoImg.insertAdjacentHTML('beforeend', `Total images:  ${data.totalHits}`);
@@ -61,5 +69,5 @@ function loadMore() {
     fetchPtoto(searchQuery, page, per_page).then(render);
 };
 function error() {
-    return Notiflix.Notify.failure('Sorry we cant load pictures. Try again!');
+  return Notiflix.Notify.failure('Sorry we cant load pictures. Try again!');
 }
